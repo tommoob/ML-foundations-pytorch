@@ -1,0 +1,11 @@
+services:
+  ml-workflow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ml_workflow
+    working_dir: /code/ML-foundations-pytorchh
+    env_file:
+      - .env
+    volumes:
+      - ./:/code/ML-foundations-pytorchh
