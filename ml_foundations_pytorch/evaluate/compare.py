@@ -1,1 +1,1 @@
-""" Custom functions for ml_foundations_pytorch specific model comparisons. """
+"""Custom functions for ml_foundations_pytorch specific model comparisons."""
