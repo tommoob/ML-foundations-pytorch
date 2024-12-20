@@ -1,18 +1,21 @@
 import os
-from typing import Dict
 import numpy as np
+from collections import defaultdict
+
+from ml_foundations_pytorch.data import MNISTdataset
+from torch.utils.data import DataLoader
 
 
 class MNISTDataLoader:
     """A class for ingesting and processing MNIST data."""
-    
+
     def __init__(self):
-        self.images: Dict[str, np.ndarray] = {}
-        self.labels: Dict[str, np.ndarray] = {}
-        self.train_images = "train-images-idx3-ubyte"
-        self.val_images = "t10k-images-idx3-ubyte"
-        self.train_labels = "train-labels-idx1-ubyte"
-        self.val_labels = "train-labels-idx1-ubyte"
+        self.train_images = "train-images.idx3-ubyte"
+        self.val_images = "t10k-images.idx3-ubyte"
+        self.train_labels = "train-labels.idx1-ubyte"
+        self.val_labels = "train-labels.idx1-ubyte"
+        self.images = defaultdict(int)
+        self.labels = defaultdict(int)
 
     def load_labels(self, path_dir: str, filename: str, byte_size: int) -> None:
         """Loads MNIST labels from a binary file.
@@ -23,9 +26,11 @@ class MNISTDataLoader:
             byte_size: The number of bytes to read per label.
         """
         number_training_examples, number_val_examples = 60007, 10007
-        header_size = 0
+        header_size = 8
         file_path = os.path.join(path_dir, filename)
-        num_labels = number_training_examples if "train" in filename else number_val_examples
+        num_labels = (
+            number_training_examples if "train" in filename else number_val_examples
+        )
         labels = np.zeros(num_labels, dtype=np.uint8)
 
         try:
@@ -63,8 +68,8 @@ class MNISTDataLoader:
             raise RuntimeError(f"Error reading image file: {e}")
 
         self.images[filename] = images
-    
-    def MnistLoader(self, data_path):
+
+    def Mnist_loader(self, data_path):
         data_files = os.listdir(data_path)
         byte_num = 1
         for file in data_files:
@@ -72,3 +77,16 @@ class MNISTDataLoader:
                 self.load_labels(data_path, file, byte_num)
             elif "images" in file:
                 self.load_images(data_path, file)
+
+    def orchestrate_MNIST_dataloading(
+        self, data_path: str, image_set: str, label_set: str
+    ):
+        self.Mnist_loader(data_path)
+
+        datasetMNIST = MNISTdataset.MNISTDataset(
+            images=self.images[image_set], labels=self.labels[label_set]
+        )
+
+        loaded_data = DataLoader(datasetMNIST, batch_size=64, shuffle=True)
+
+        return loaded_data
