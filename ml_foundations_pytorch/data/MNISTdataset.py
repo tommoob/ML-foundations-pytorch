@@ -12,7 +12,9 @@ class MNISTDataset(Dataset):
             images (np.ndarray): Array of images.
             labels (np.ndarray): Array of labels.
         """
-        self.images = torch.tensor(images, dtype=torch.float32) / 255.0  # Normalize to [0, 1]
+        self.images = (
+            torch.tensor(images, dtype=torch.float32) / 255.0
+        )  # Normalize to [0, 1]
         self.labels = torch.tensor(labels, dtype=torch.long)  # Labels as integers
 
     def __len__(self):
