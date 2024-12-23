@@ -1,9 +1,12 @@
-""" Custom functions for ml_foundations_pytorch specific plots."""
+"""Custom functions for ml_foundations_pytorch specific plots."""
+
 from matplotlib import pyplot as plt
 import numpy as np
 
 
-def visualise_images(images: np.ndarray, num_rows: int = 4, num_cols: int = 4) -> None:
+def visualise_images(
+    images: np.ndarray, labels: np.ndarray, num_rows: int = 4, num_cols: int = 4
+) -> None:
     """Visualizes a grid of images.
 
     Args:
@@ -17,6 +20,6 @@ def visualise_images(images: np.ndarray, num_rows: int = 4, num_cols: int = 4) -
         ax = axes[i // num_cols, i % num_cols]
         ax.imshow(images[i], cmap="gray")
         ax.axis("off")
-        ax.set_title(f"Image {i}")
+        ax.set_title(f"Image {i}, label {labels[i]}")
     plt.tight_layout()
     plt.show()
