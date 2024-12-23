@@ -26,6 +26,7 @@ imgaug = "*"
 python-dotenv = "*"
 pablo-common = {version = "^0.0.0", source = "pablo"}
 scikit-learn = "^1.6.0"
+python-box = "^7.1.1"
 
 [tool.poetry.group.onnx_export]
 optional = false
