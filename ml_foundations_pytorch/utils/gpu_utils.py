@@ -1,4 +1,4 @@
-""" Custom functions for ml_foundations_pytorch specific GPU utilities"""
+"""Custom functions for ml_foundations_pytorch specific GPU utilities"""
 
 import logging
 import torch

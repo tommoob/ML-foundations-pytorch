@@ -1,4 +1,5 @@
-""" Custom functions for ml_foundations_pytorch specific pre-processing."""
+"""Custom functions for ml_foundations_pytorch specific pre-processing."""
+
 import numpy as np
 
 
@@ -16,4 +17,3 @@ def one_hot_encode_labels(self, labels: np.ndarray) -> np.ndarray:
     for label in range(num_classes):
         one_hot[label] = (labels == label).astype(np.uint8)
     return one_hot
-

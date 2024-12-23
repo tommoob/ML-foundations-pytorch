@@ -1,4 +1,4 @@
-""" Custom functions for ml_foundations_pytorch specific WandB operations."""
+"""Custom functions for ml_foundations_pytorch specific WandB operations."""
 
 from dotenv import load_dotenv
 import wandb
