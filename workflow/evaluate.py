@@ -11,10 +11,12 @@ from models.MNIST.convolutional_network import ConvolutionalNetwork
 
 
 def evaluate(model_dir: str, config_values: ConfigBox) -> None:
-    """Function for running custom model evaluation code.
+    """Create PR_curves of the model perormance on the testset
 
-    Returns: None
-
+    model_dir
+        The save directory for the model
+    config_values
+        The contents of the data.yaml file
     """
     logging.info("Evaluating ML model...")
     model_path = os.path.join(model_dir, "model.pth")
@@ -64,6 +66,13 @@ def evaluate(model_dir: str, config_values: ConfigBox) -> None:
     help="COnfig where information about the dataset and model type are stored.",
 )
 def run_evaluation(model_num: int, config: str):
+    """Runs evaluation script (to create PR_curves) with click arguments
+
+    model_num
+        The number of the model being tested (for exp6/model.pth, model_num=6)
+    config
+        The path to the data.yaml file
+    """
     config_values = load_yaml_as_box(config)
     model_dir = f"experiments/runs/train/exp{model_num}"
     evaluate(model_dir, config_values)
