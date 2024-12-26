@@ -13,10 +13,15 @@ from ml_foundations_pytorch.utils.file_utils import (
 )
 
 
-def train_MNIST(epochs: int, config_values: ConfigBox) -> None:
+def train(epochs: int, config_values: ConfigBox) -> None:
     """Function for running custom training code.
 
-    Returns: None
+    Parameters
+    ----------
+    epochs
+        The number of passes over the dataset training will include
+    config_values
+        The contents of the data.yaml file
 
     """
     logging.info("Training ML model...")
@@ -37,6 +42,10 @@ def train_MNIST(epochs: int, config_values: ConfigBox) -> None:
         train_dataset = datasets.MNIST(
             root="./data", train=True, transform=transform, download=True
         )
+    elif config_values.dataset == "imagenet":
+        train_dataset = datasets.ImageNet(
+            root="./data", train=True, transform=transform, download=False
+        )
     train_loader = torch.utils.data.DataLoader(
         train_dataset, batch_size=64, shuffle=False
     )
@@ -52,6 +61,41 @@ def train_MNIST(epochs: int, config_values: ConfigBox) -> None:
         criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
+    training_loop(epochs, model, device, train_loader, optimizer, criterion)
+
+    model_save_root = "experiments/runs/train"
+    exp_model_dir = get_next_experiment_dir(model_save_root)
+    save_model(model, save_dir=exp_model_dir)
+
+
+def training_loop(
+    epochs: int,
+    model: torch.nn.Module,
+    device: str,
+    train_loader: torch.utils.data.DataLoader,
+    optimizer: torch.optim.Optimizer,
+    criterion: torch.nn.Module,
+):
+    """
+    Run training loop
+
+    Parameters
+    ----------
+    epochs
+        The number of passes over the dataset training will include
+    model
+        The model weights object being trained
+    device
+        The device on which to do training (cpu vs gpu)
+    train_loader
+        The training data and labels organised into a batched dataloader object
+    optimizer
+        Used to adjust model weights during training
+    criterion
+        The function used to calculate the loss in the system
+
+
+    """
     for epoch in range(epochs):
         model.train()
         running_loss = 0
@@ -68,10 +112,6 @@ def train_MNIST(epochs: int, config_values: ConfigBox) -> None:
 
             running_loss += loss.item()
         print(f"Epoch {epoch+1}/{epochs}, Loss: {running_loss/len(train_loader):.4f}")
-
-    model_save_root = "experiments/runs/train"
-    exp_model_dir = get_next_experiment_dir(model_save_root)
-    save_model(model, save_dir=exp_model_dir)
 
 
 @click.command()
@@ -90,7 +130,7 @@ def train_MNIST(epochs: int, config_values: ConfigBox) -> None:
 def run_training(epochs: int, config: str):
     config_values = load_yaml_as_box(config)
 
-    train_MNIST(epochs, config_values)
+    train(epochs, config_values)
 
 
 if __name__ == "__main__":
