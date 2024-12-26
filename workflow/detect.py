@@ -1,14 +1,22 @@
 import os
 import click
-from ml_foundations_pytorch.utils.file_utils import load_model
+from ml_foundations_pytorch.utils.file_utils import load_model, load_yaml_as_box
 from ml_foundations_pytorch.utils.model_utils import (
     display_sample_predictions,
 )
 from torchvision import datasets, transforms
 import torch
+from box import ConfigBox
 
 
-def detect(model_dir: str):
+def detect(model_dir: str, config_values: ConfigBox):
+    """Runs detection on testset
+
+    model_dir
+        The save directory for the model
+    config_values
+        The contents of the data.yaml file
+    """
     # Paths
     model_path = os.path.join(model_dir, "model.pth")
 
@@ -22,9 +30,14 @@ def detect(model_dir: str):
             transforms.Normalize((0.5,), (0.5,)),  # Normalize images to [-1, 1]
         ]
     )
-    test_dataset = datasets.MNIST(
-        root="./data", train=False, transform=transform, download=True
-    )
+    if config_values.dataset == "MNIST":
+        test_dataset = datasets.MNIST(
+            root="./data", train=False, transform=transform, download=True
+        )
+    elif config_values.dataset == "imagenet":
+        test_dataset = datasets.ImageNet(
+            root="./data", train=False, transform=transform, download=False
+        )
     test_loader = torch.utils.data.DataLoader(
         test_dataset, batch_size=64, shuffle=False
     )
@@ -50,9 +63,23 @@ def detect(model_dir: str):
     default="3",
     help="Which training run to use.",
 )
-def run_detection(model_num: int):
+@click.option(
+    "--config",
+    type=str,
+    default="config/yolov7/data.yaml",
+    help="COnfig where information about the dataset and model type are stored.",
+)
+def run_detection(model_num: int, config: str):
+    """Runs detection script with click arguments
+
+    model_num
+        The number of the model being tested (for exp6/model.pth, model_num=6)
+    config
+        The path to the data.yaml file
+    """
+    config_values = load_yaml_as_box(config)
     model_dir = f"experiments/runs/train/exp{model_num}"
-    detect(model_dir)
+    detect(model_dir, config_values)
 
 
 if __name__ == "__main__":
