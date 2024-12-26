@@ -42,9 +42,14 @@ def evaluate(model_dir: str, config_values: ConfigBox) -> None:
             transforms.Normalize((0.5,), (0.5,)),  # Normalize images to [-1, 1]
         ]
     )
-    test_dataset = datasets.MNIST(
-        root="./data", train=False, transform=transform, download=True
-    )
+    if config_values.dataset == "MNIST":
+        test_dataset = datasets.MNIST(
+            root="./data", train=False, transform=transform, download=True
+        )
+    elif config_values.dataset == "imagenet":
+        test_dataset = datasets.ImageNet(
+            root="./data", train=False, transform=transform, download=False
+        )
     test_loader = torch.utils.data.DataLoader(
         test_dataset, batch_size=64, shuffle=False
     )

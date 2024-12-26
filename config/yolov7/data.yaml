@@ -1,4 +1,4 @@
 ---
-dataset: MNIST
+dataset: imagenet
 # hidden_layer, convolution
 model_type: convolution
